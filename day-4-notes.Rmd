@@ -11,6 +11,7 @@ library(tidyverse)
 ```
 
 ## Nested for loop
+
 ```{r}
 file_prefix <- c("temp", "ph", "salinity")
 file_suffix <- c(1, 2, 3, 4, 5)
@@ -32,22 +33,22 @@ for (i in seq_along(odds)) {
   }
 }
 ```
-# inner-most for loop must be evaluated all the way through before outer-most for loop can advance.
+
+inner-most for loop must be evaluated all the way through before outer-most for loop can advance.
 
 ## Functions
 
 Anatomy of a function
+
 ```{r}
 function_name <- function(bird, dog) {
   pets = bird + dog
   return(pets)
 }
 ```
-In Python
-# def function_name(bird, dog):
-  # pets = bird + dog
-  # return(pets)
-  
+
+In Python \# def function_name(bird, dog): \# pets = bird + dog \# return(pets)
+
 ```{r}
 exclaim_age <- function(age) {
   print(paste("I am", age, "years old!"))
@@ -57,6 +58,7 @@ exclaim_age(age = 10)
 ```
 
 In class warm-up
+
 ```{r}
 quarter_splits <- c(1.0, 1.1, 1.2, 1.1, 1.4, 1.5, 1.6, 1.4)
 
@@ -69,6 +71,7 @@ for (i in seq_along(quarter_splits)) {
 ```
 
 Make a function to double user input.
+
 ```{r}
 double_this <- function(my_value) {
   print(2 * my_value)
@@ -81,6 +84,7 @@ double_this(c(1, 2, 10, 100, 175)) #func is doing iteration for us...
 ```
 
 Write a func that asks for a user's name and age, and returns an exclamation, like "I'm [name], and I am [age] years old."
+
 ```{r}
 exclaim_age <- function(your_name, your_age) {
   print(paste("My name is", your_name, "and I am", your_age, "years old."))
@@ -106,6 +110,7 @@ convert_animal_age(animal = "pika", human_age = 4)
 ```
 
 Use tribble to make data frame.
+
 ```{r}
 dog_choice <- tribble(
   ~dog_name, ~food,
@@ -115,7 +120,9 @@ dog_choice <- tribble(
   "Banjo", "chicken"
 )
 ```
-My name is __ & I love __.
+
+My name is \_\_ & I love \_\_.
+
 ```{r}
 dog_menu <- function(name) {
   my_sub <- filter(dog_choice, dog_name == name)
@@ -127,6 +134,7 @@ dog_menu(name = "Banjo")
 ```
 
 ## Functions & For Loops
+
 ```{r}
 # Func iterates over every column in data frame, finds mean. 
 
@@ -139,7 +147,7 @@ means_over_columns <- function(df) {
   }
 }
 
-Example...
+#Example...
 means_over_columns(df = mtcars)
 means_over_columns(df = faithful)
 
@@ -173,7 +181,96 @@ for (i in seq_along(first_name)) {
 }
 ```
 
+## For loop - carrying capacity
+
+Plan & Pseudo-code: 
+-- out_matrix = matrix () #to store output 
+-- for(i in sequence of growth rates) { 
+    for (j in sequence of times) { 
+      calc_logistic (for i over all j) 
+      store calc_population in out_matrix 
+    } 
+  }
+```{r}
+logistic_growth <- function(N0, K, r, time) {
+  Nt <- K / (1 + ((K - N0) / N0) * exp(-r * time))
+  print(Nt)
+}
+
+#iterate over time for multiple growth rates
+#Create a seq of growth rate values:
+r_seq <- seq(from = 0.20, to = 0.40, by = 0.01)
+time_vec <- seq(from = 0, to = 35, by = 0.1)
+
+#Need to create a MATRIX to store the outputs in :
+out_matrix <- matrix(nrow = length(time_vec), ncol = length(r_seq))
+
+#Nested for-loop:
+for (i in 1:length(r_seq)) { #outer loop is the growth rates
+  for (j in 1:length(time_vec)) { #inner loop is the time seq values
+  pop <- logistic_growth(N0 = 100, K = 6000, r = r_seq[i], time = time_vec[j])
+  out_matrix[j, i] <- pop #Store the value in the appropriate row, col
+  }
+  }
+```
+
+## Model a population over time and varying growth rate.
+```{r}
+#Ctrl + Alt + X: creates a function
+logistic_growth <- function(K, N0, r, time) {
+  K / (1 + ((K - N0) / N0) * exp(-r * time))
+}
+
+#test function
+logistic_growth(K = 5000, N0 = 100, r = 0.07, time = 42)
+
+#iterate over time
+time_vec <- seq(from = 0, to = 35, by = 0.1)
+
+pop_35 <- logistic_growth(N0 = 40, K = 8000, r = 0.1, time = time_vec)
 
 
+#Data vis
+pop_time35_df <- data.frame(time_vec, pop_35)
 
+ggplot(data = pop_time35_df, aes(x = time_vec, y = pop_35)) +
+         geom_line()
+```
+
+same outcome...
+```{r}
+pop_35_vec <- vector(mode = "numeric", length = length(time_vec))
+
+for (i in seq_along(time_vec)) {
+  population <- logistic_growth(N0 = 100, K = 6000, r = 0.27, time = time_vec[i])
+  pop_35_vec[i] <- population
+}
+```
+
+Extend this to iterate over multiple growth rates.
+```{r}
+r_seq <- seq(from = 0.20, to = 0.4, by = 0.01)
+```
+
+```{r}
+out_matrix <- matrix(nrow = length(time_vec), ncol = length(r_seq))
+
+for (i in seq_along(r_seq)) {
+  for (j in seq_along(time_vec)) {
+    pop <- logistic_growth(N0 = 100, K = 6000, r = r_seq[i], time = time_vec[j])
+  out_matrix[j, i] <- pop
+  }
+}
+
+logistic_df <- data.frame(out_matrix, time = time_vec)
+colnames(logistic_df) <- c(paste0("gr_", r_seq), "time")
+
+logistic_df_long <- logistic_df |> 
+  pivot_longer(cols = -time, values_to = "population", names_to = "growth_rate")
+
+ggplot(data = logistic_df_long, aes(x = time, y = population)) +
+  geom_line(aes(color = growth_rate)) +
+  theme_minimal()
+  
+```
 
