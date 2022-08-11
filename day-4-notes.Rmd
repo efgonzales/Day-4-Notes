@@ -257,7 +257,7 @@ out_matrix <- matrix(nrow = length(time_vec), ncol = length(r_seq))
 
 for (i in seq_along(r_seq)) {
   for (j in seq_along(time_vec)) {
-    pop <- logistic_growth(N0 = 100, K = 6000, r = r_seq[i], time = time_vec[j])
+    pop <- logistic_growth(N0 = 100, K = 4500, r = r_seq[i], time = time_vec[j])
   out_matrix[j, i] <- pop
   }
 }
@@ -270,7 +270,37 @@ logistic_df_long <- logistic_df |>
 
 ggplot(data = logistic_df_long, aes(x = time, y = population)) +
   geom_line(aes(color = growth_rate)) +
-  theme_minimal()
+  theme_classic()
   
+```
+
+# Func + warning, error message
+
+Use `warning` to add a warning. Use `stop` to add an error.
+
+$$P=0.3\rho$$
+rho: air density (kg / m^3)
+A: area covered by turbine (m^2)
+v: wind velocity (m/s)
+```{r}
+calc_wind_power <- function(rho, radius, windspeed) {
+  
+  if (windspeed > 130) {
+    warning("That's fast. Are you sure?")
+  }
+  
+  if (rho > 1.225) {
+    warning("That air density is suspicious.")
+  }
+  
+  if (radius < 0) {
+    stop("Rotor radius must be a positive value in meters.")
+  }
+  
+  0.3*rho*pi*(radius^2)*(windspeed^3)
+}
+
+
+calc_wind_power(1.225, -6, 15)
 ```
 
