@@ -1,0 +1,57 @@
+---
+title: "Day 4 Notes"
+author: "Elise Gonzales"
+date: "2022-08-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Nested for loop
+```{r}
+file_prefix <- c("temp", "ph", "salinity")
+file_suffix <- c(1, 2, 3, 4, 5)
+
+for (i in seq_along(file_prefix)) {
+  for (j in seq_along(file_suffix)) {
+    print(paste0(file_prefix[i], "_", file_suffix[j]))
+  }
+}
+```
+
+```{r}
+odds <- c(1, 3, 5)
+evens <- c(2, 4, 6, 8)
+
+for (i in seq_along(odds)) {
+  for (j in seq_along(evens)) {
+    print(odds[i] * evens[j])
+  }
+}
+```
+# inner-most for loop must be evaluated all the way through before outer-most for loop can advance.
+
+## Functions
+
+Anatomy of a function
+```{r}
+function_name <- function(bird, dog) {
+  pets = bird + dog
+  return(pets)
+}
+```
+In Python
+# def function_name(bird, dog):
+  # pets = bird + dog
+  # return(pets)
+  
+```{r}
+exclaim_age <- function(age) {
+  print(paste("I am", age, "years old!"))
+}
+
+exclaim_age(age = 10)
+```
+
