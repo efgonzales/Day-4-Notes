@@ -145,3 +145,35 @@ means_over_columns(df = faithful)
 
 ```
 
+```{r}
+apples <- c(1, 2, 3, 4)
+price <- c(7, 10, 25)
+
+fruit_out <-matrix(nrow = length(price), ncol = length(apples))
+
+for (i in seq_along(apples)) {
+  for (j in seq_along(price)) {
+    total_cost <- price[j] * apples[i]
+    fruit_out[j, i] <- total_cost #tells you the [row, col] where to place output
+  }
+}
+```
+
+```{r}
+first_name <- c("Kiran", "Elise", "Michael")
+last_name <- c("Chair", "Table", "Plant", "Desk")
+
+full_name <- matrix(nrow = length(first_name), ncol = length(last_name))
+
+for (i in seq_along(first_name)) {
+  for (j in seq_along(last_name)) {
+    add_names <- paste(first_name[i], last_name[j])
+    full_name[i, j] <- add_names
+  }
+}
+```
+
+
+
+
+
