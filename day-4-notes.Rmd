@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
 ## Nested for loop
@@ -53,5 +54,94 @@ exclaim_age <- function(age) {
 }
 
 exclaim_age(age = 10)
+```
+
+In class warm-up
+```{r}
+quarter_splits <- c(1.0, 1.1, 1.2, 1.1, 1.4, 1.5, 1.6, 1.4)
+
+#you could create empty vector here to store outputs in
+
+for (i in seq_along(quarter_splits)) {
+  val = quarter_splits[i] + quarter_splits[i + 1]
+  print(val)
+}
+```
+
+Make a function to double user input.
+```{r}
+double_this <- function(my_value) {
+  print(2 * my_value)
+}
+
+double_this(200) #or
+double_this(my_value = 200)
+
+double_this(c(1, 2, 10, 100, 175)) #func is doing iteration for us...
+```
+
+Write a func that asks for a user's name and age, and returns an exclamation, like "I'm [name], and I am [age] years old."
+```{r}
+exclaim_age <- function(your_name, your_age) {
+  print(paste("My name is", your_name, "and I am", your_age, "years old."))
+}
+exclaim_age(your_name = "Elise", your_age = 25)
+```
+
+## Function with conditional
+
+```{r}
+convert_animal_age <- function(animal, human_age) {
+  if (animal == "dog") {
+    print(human_age * 7)
+  } else if (animal == "goat") {
+    print(human_age* 4.7)
+  } else 
+    print("Animal must be dog or goat.")
+}
+
+convert_animal_age(animal = "dog", human_age = 12)
+convert_animal_age(animal = "pika", human_age = 4)
+
+```
+
+Use tribble to make data frame.
+```{r}
+dog_choice <- tribble(
+  ~dog_name, ~food,
+  "Khora", "everything",
+  "Teddy", "salmon",
+  "Waffle", "pancakes",
+  "Banjo", "chicken"
+)
+```
+My name is __ & I love __.
+```{r}
+dog_menu <- function(name) {
+  my_sub <- filter(dog_choice, dog_name == name)
+  print(paste("My name is", my_sub$dog_name, "and my favorite food is", my_sub$food))
+}
+dog_menu(name = "Waffle")
+dog_menu(name = "Banjo")
+
+```
+
+## Functions & For Loops
+```{r}
+# Func iterates over every column in data frame, finds mean. 
+
+#function from scratch (apply col_mean, etc does the same thing)
+means_over_columns <- function(df) {
+  for (i in seq_along(df)) {
+    col_mean <- mean(df[[i]], na.rm = TRUE)
+    column_name <- colnames(df[i])
+    print(paste("The mean value of", column_name, "is", col_mean))
+  }
+}
+
+Example...
+means_over_columns(df = mtcars)
+means_over_columns(df = faithful)
+
 ```
 
